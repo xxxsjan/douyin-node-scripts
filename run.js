@@ -25,9 +25,9 @@ switch (process.argv[2]) {
   default:
     console.log(
       '传参不对 \n',
-      'node ./src/run.js 1 -----get follow list\n',
-      'node ./src/run.js 2 -----get note follow me \n',
-      'node ./src/run.js 3 -----analysis data \n'
+      'node ./run.js 1 -----get follow list\n',
+      'node ./run.js 2 -----get note follow me \n',
+      'node ./run.js 3 -----analysis data \n'
     );
     break;
 }

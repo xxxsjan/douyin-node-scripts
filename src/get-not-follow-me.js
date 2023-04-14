@@ -1,25 +1,28 @@
-const puppeteer = require("puppeteer-core");
+// const puppeteer = require("puppeteer-core");
+const puppeteer = require("puppeteer");
+
 const ms = require("ms");
 const { delay } = require("bluebird");
 const fs = require("fs");
 var log = require("single-line-log").stdout;
 const path = require("path");
 
-const { copySync } = require("fs-extra");
 const { selector } = require("../config");
-const { getWsUrl, getInfo, strRemoveImg } = require("../utils");
+const { getWsUrl, getInfo, strRemoveImg, sleep } = require("../utils");
 
-const outputPath = path.resolve(__dirname, "./data/not-follow-me.json");
-const { sleep } = require("../utils");
+const outputPath = path.resolve(__dirname, "../data/not-follow-me.json");
+
 (async () => {
+  if (!fs.existsSync(path.resolve(__dirname, "../data/follow-list.json"))) {
+    return;
+  }
   const browser = await puppeteer.connect({
     browserWSEndpoint: getWsUrl(),
   });
 
   const page = await browser.newPage();
   await page.setViewport({ width: 1200, height: 600, deviceScaleFactor: 1 });
-
-  const allFollowList = require("../data/follow-list.json");
+  const allFollowList = require();
 
   const eachFollow = allFollowList.all.filter(
     (item) => item.status === "相互关注"
@@ -70,10 +73,10 @@ const { sleep } = require("../utils");
       // 缓存
       if (i !== 0 && i % 10 === 0) {
         fs.writeFileSync(
-          `./cache/not-follow-me-${i}.json`,
+          path.resolve(__dirname, `../cache/not-follow-me-${i}.json`),
           JSON.stringify({ data: notFollowList })
         );
-        // console.log(`临时缓存------------./cache/not-follow-me-${i}.json`);
+        // console.log(`临时缓存------------../cache/not-follow-me-${i}.json`);
       }
       await sleep(2000);
       const userInfo = await getInfo(page, it.home);
@@ -98,18 +101,21 @@ const { sleep } = require("../utils");
   fs.writeFileSync(outputPath, JSON.stringify({ data: notFollowList }));
   // 更新缓存
   fs.writeFileSync(
-    `./cache/not-follow-me-${notFollowList.length}.json`,
+    path.resolve(
+      __dirname,
+      `../cache/not-follow-me-${notFollowList.length}.json`
+    ),
     JSON.stringify({ data: notFollowList })
   );
   // 删除多余缓存
-  getLastCacheFile(`./cache/not-follow-me-${notFollowList.length}.json`);
+  getLastCacheFile(`../cache/not-follow-me-${notFollowList.length}.json`);
   console.log("已保存 ", outputPath);
   // await browser.close();
   process.exit();
 })();
 
 function getLastCacheFile(superPath) {
-  let files = fs.readdirSync("./cache");
+  let files = fs.readdirSync(path.resolve(__dirname, "../cache"));
   let lastNum;
   if (!superPath) {
     lastNum = files.reduce((pre, cur) => {
@@ -128,7 +134,7 @@ function getLastCacheFile(superPath) {
     }, 0);
     if (lastNum) {
       files.map((file) => {
-        const fileP = `./cache/${file}`;
+        const fileP = path.resolve(__dirname, `../cache/${file}`);
         if (file !== `not-follow-me-${lastNum}.json`) {
           fs.unlinkSync(fileP);
           console.log("delete", fileP);
@@ -137,7 +143,7 @@ function getLastCacheFile(superPath) {
     }
   } else {
     files.map((file) => {
-      const fileP = `./cache/${file}`;
+      const fileP = path.resolve(__dirname, `../cache/${file}`);
       if (fileP !== superPath) {
         fs.unlinkSync(fileP);
         console.log("delete", fileP);
@@ -145,5 +151,5 @@ function getLastCacheFile(superPath) {
     });
     return superPath;
   }
-  return lastNum ? `./cache/not-follow-me-${lastNum}.json` : null;
+  return lastNum ? `../cache/not-follow-me-${lastNum}.json` : null;
 }

@@ -1,12 +1,12 @@
 const fs = require("fs");
 const chalk = require("chalk");
+
 const { strRemoveImg } = require("../utils");
 const { resolve } = require("path");
 const notF = require("../data/not-follow-me.json");
 const { delay } = require("bluebird");
 const allFollow = require("../data/follow-list.json").all;
 var dayjs = require("dayjs");
-
 console.log(["用户名", "粉丝数", "关注", "签名"]);
 resultFn();
 
@@ -41,10 +41,16 @@ async function walk() {
 }
 
 async function resultFn() {
-  const logPath = resolve(__dirname, "./data/analysis-log.json");
+  if (
+    !fs.existsSync(resolve(__dirname, "../data/follow-list.json")) ||
+    !fs.existsSync(resolve(__dirname, "../data/not-follow-me.json"))
+  ) {
+    return;
+  }
+  const logPath = resolve(__dirname, "../data/analysis-log.json");
   let logData = [];
   if (fs.existsSync(logPath)) {
-    logData = require(resolve(__dirname, "./data/analysis-log.json"));
+    logData = require(resolve(__dirname, "../data/analysis-log.json"));
   }
   const res = await walk();
   const time = new Date().toLocaleString();
@@ -73,7 +79,7 @@ async function resultFn() {
     fs.writeFileSync(logPath, JSON.stringify(logData));
     console.log("保存成功", time);
   }
-  const newData = require(resolve(__dirname, "./data/analysis-log.json"));
+  const newData = require(resolve(__dirname, "../data/analysis-log.json"));
   analysisArr(newData);
 }
 function setLog(item) {
@@ -123,4 +129,5 @@ function analysisArr(arr) {
     }
   });
   console.log("出错数据", errorData);
+  process.exit();
 }

@@ -8,55 +8,12 @@ var log = require("single-line-log").stdout;
 const { selector, homeUrl } = require("../config");
 const { getWsUrl, getInfo, strRemoveImg, initPage } = require("../utils");
 
-const outputPath = path.resolve(__dirname, "./data/follow-list.json");
-
-async function getAllList(page, showNum = 100) {
-  let data = {};
-  let isFoot = false;
-  while (!isFoot) {
-    const _data = await page.evaluate(
-      ({ showNum, selector }) => {
-        const w = document.querySelector(selector.scrollWrapper);
-        const { scrollTop, scrollHeight, clientHeight } = w;
-        const renderNum = document.querySelectorAll(selector.scrollItem).length;
-        console.log("当前渲染个数：", renderNum, showNum);
-        let top = w.scrollHeight - w.clientHeight + 10;
-
-        const result = {
-          scrollTop,
-          scrollHeight,
-          clientHeight,
-          renderNum,
-        };
-        if (renderNum >= showNum) {
-          return {
-            ...result,
-            isFoot: true,
-          };
-        }
-        w.scrollTo(0, top);
-        return {
-          ...result,
-          isFoot: false,
-        };
-      },
-      { showNum, selector }
-    );
-    log("获取关注列表进度：", _data.renderNum, "/", showNum, _data.isFoot);
-
-    await delay(ms("1s"));
-    if (_data.isFoot) {
-      isFoot = true;
-      data = _data;
-    }
-  }
-  return Promise.resolve(data);
-}
+const outputPath = path.resolve(__dirname, "../data/follow-list.json");
 
 async function main() {
   const browser = await puppeteer.connect({
     browserWSEndpoint: getWsUrl(),
-  });// 使用debug浏览器
+  }); // 使用debug浏览器
   // const browser = await puppeteer.launch({ headless: false});// 打开浏览器
   const page = await browser.newPage();
   await page.setViewport({ width: 1200, height: 600, deviceScaleFactor: 1 });
@@ -249,7 +206,48 @@ async function main() {
   await getFollow();
 
   // await browser.close();
-  process.exit()
+  process.exit();
 }
+async function getAllList(page, showNum = 100) {
+  let data = {};
+  let isFoot = false;
+  while (!isFoot) {
+    const _data = await page.evaluate(
+      ({ showNum, selector }) => {
+        const w = document.querySelector(selector.scrollWrapper);
+        const { scrollTop, scrollHeight, clientHeight } = w;
+        const renderNum = document.querySelectorAll(selector.scrollItem).length;
+        console.log("当前渲染个数：", renderNum, showNum);
+        let top = w.scrollHeight - w.clientHeight + 10;
 
+        const result = {
+          scrollTop,
+          scrollHeight,
+          clientHeight,
+          renderNum,
+        };
+        if (renderNum >= showNum) {
+          return {
+            ...result,
+            isFoot: true,
+          };
+        }
+        w.scrollTo(0, top);
+        return {
+          ...result,
+          isFoot: false,
+        };
+      },
+      { showNum, selector }
+    );
+    log("获取关注列表进度：", _data.renderNum, "/", showNum, _data.isFoot);
+
+    await delay(ms("1s"));
+    if (_data.isFoot) {
+      isFoot = true;
+      data = _data;
+    }
+  }
+  return Promise.resolve(data);
+}
 main();
