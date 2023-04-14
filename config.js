@@ -8,6 +8,4 @@ module.exports = {
     scrollItem: ".vcEWxPjN",
   },
   homeUrl: "https://www.douyin.com/user/self",
-  // homeUrl:
-  //   "https://www.douyin.com/user/MS4wLjABAAAAw6_Jq4rDqlUKujFUvw0mjwTE8Y4uYuqJoKIQWO43oBYTd5_FlhU3qZ-PbOS7MP35",
 };
