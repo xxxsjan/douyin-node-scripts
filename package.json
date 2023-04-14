@@ -1,0 +1,12 @@
+{
+  "name": "douyin-follow-analysis",
+  "version": "1.0.0",
+  "description": "puppeteer获取抖音粉丝关注，分析互关",
+  "main": "analysis-follow.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
