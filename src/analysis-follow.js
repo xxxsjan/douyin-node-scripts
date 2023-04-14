@@ -1,10 +1,10 @@
 const fs = require("fs");
 const chalk = require("chalk");
-const { strRemoveImg } = require("./utils");
+const { strRemoveImg } = require("../utils");
 const { resolve } = require("path");
-const notF = require("./data/not-follow-me.json");
+const notF = require("../data/not-follow-me.json");
 const { delay } = require("bluebird");
-const allFollow = require("./data/follow-list.json").all;
+const allFollow = require("../data/follow-list.json").all;
 var dayjs = require("dayjs");
 
 console.log(["用户名", "粉丝数", "关注", "签名"]);

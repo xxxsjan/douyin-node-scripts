@@ -11,6 +11,7 @@ const shell = require('shelljs');
 // 不使用库，简单解析
 // process.argv 第一个是node执行器的路径，第二个是当前执行js的文件路径，第三个起才是option
 
+
 switch (process.argv[2]) {
   case '1':
     getFollowList();
@@ -24,15 +25,15 @@ switch (process.argv[2]) {
   default:
     console.log(
       '传参不对 \n',
-      'node ./run.js 1 -----get follow list\n',
-      'node ./run.js 2 -----get note follow me \n',
-      'node ./run.js 3 -----analysis data \n'
+      'node ./src/run.js 1 -----get follow list\n',
+      'node ./src/run.js 2 -----get note follow me \n',
+      'node ./src/run.js 3 -----analysis data \n'
     );
     break;
 }
 
 function getFollowList() {
-  shell.exec('node ./get-follow-list.js', function (code, stdout, stderr) {
+  shell.exec('node ./src/get-follow-list.js', function (code, stdout, stderr) {
     console.log('Exit code:', code);
     console.log('Program output:', stdout);
     console.log('Program stderr:', stderr);
@@ -42,7 +43,7 @@ function getFollowList() {
   });
 }
 function getNot() {
-  shell.exec('node ./get-not-follow-me.js', function (code, stdout, stderr) {
+  shell.exec('node ./src/get-not-follow-me.js', function (code, stdout, stderr) {
     console.log('Exit code:', code);
     console.log('Program output:', stdout);
     console.log('Program stderr:', stderr);
@@ -52,7 +53,7 @@ function getNot() {
   });
 }
 function analysisData() {
-  shell.exec('node ./analysis-follow.js', function (code, stdout, stderr) {
+  shell.exec('node ./src/analysis-follow.js', function (code, stdout, stderr) {
     console.log('Exit code:', code);
     console.log('Program output:', stdout);
     console.log('Program stderr:', stderr);

@@ -5,8 +5,8 @@ const fs = require("fs");
 const path = require("path");
 var log = require("single-line-log").stdout;
 
-const { selector, homeUrl } = require("./config");
-const { getWsUrl, getInfo, strRemoveImg, initPage } = require("./utils");
+const { selector, homeUrl } = require("../config");
+const { getWsUrl, getInfo, strRemoveImg, initPage } = require("../utils");
 
 const outputPath = path.resolve(__dirname, "./data/follow-list.json");
 
@@ -65,7 +65,7 @@ async function main() {
   console.log("userInfo: ", JSON.stringify(userInfo));
 
   async function getFollow() {
-    const originData = require("./data/follow-list.json") || {};
+    const originData = require("../data/follow-list.json") || {};
     console.log("上次关注的数据", originData.all.length, "条");
 
     const followBtn = await page.waitForSelector(selector.followNum);
@@ -162,7 +162,7 @@ async function main() {
 
     await page.waitForSelector(".Pxf0E4cv");
 
-    const lessThanTen = require("./data/not-follow-me.json")
+    const lessThanTen = require("../data/not-follow-me.json")
       .data.filter((f) => f.fansNum.indexOf("w") === -1)
       .filter((f) => Number(f.fansNum) > 5000)
       .map((it) => {

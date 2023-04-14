@@ -6,11 +6,11 @@ var log = require("single-line-log").stdout;
 const path = require("path");
 
 const { copySync } = require("fs-extra");
-const { selector } = require("./config");
-const { getWsUrl, getInfo, strRemoveImg } = require("./utils");
+const { selector } = require("../config");
+const { getWsUrl, getInfo, strRemoveImg } = require("../utils");
 
 const outputPath = path.resolve(__dirname, "./data/not-follow-me.json");
-const { sleep } = require("./utils");
+const { sleep } = require("../utils");
 (async () => {
   const browser = await puppeteer.connect({
     browserWSEndpoint: getWsUrl(),
@@ -19,7 +19,7 @@ const { sleep } = require("./utils");
   const page = await browser.newPage();
   await page.setViewport({ width: 1200, height: 600, deviceScaleFactor: 1 });
 
-  const allFollowList = require("./data/follow-list.json");
+  const allFollowList = require("../data/follow-list.json");
 
   const eachFollow = allFollowList.all.filter(
     (item) => item.status === "相互关注"
