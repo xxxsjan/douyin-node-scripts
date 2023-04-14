@@ -25,7 +25,10 @@ node ./run.js 3 -----分析结果
 
 ## js说明
 
-get-follow-list.js 为获取所有关注的脚本
-get-not-follow-list.js 获取我单向关注的博主列表
-analysis-follow   分析获取结果
-analysis-url.js   爬取原神抽卡日志-demo
+- get-follow-list.js 为获取所有关注的脚本
+
+- get-not-follow-list.js 获取我单向关注的博主列表
+
+- analysis-follow   分析获取结果
+
+- analysis-url.js   爬取原神抽卡日志-demo
