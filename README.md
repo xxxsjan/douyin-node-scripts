@@ -16,7 +16,7 @@
 
 修改config.js 里的ws地址
 
-homeUrl是你主页地址，默认是<https://www.douyin.com/user/self就可以了>
+homeUrl是你主页地址，默认是<https://www.douyin.com/user/self>就可以了
 
 ## 执行脚本
 

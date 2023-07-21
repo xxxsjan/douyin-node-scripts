@@ -1,5 +1,6 @@
 const { delay } = require("bluebird");
-
+const fs = require("fs");
+const path = require("path");
 // 有图片的昵称转成普通的
 function strRemoveImg(name) {
   if (!name) return "";
@@ -68,15 +69,25 @@ async function initPage(page) {
   // const browser = await puppeteer.connect({
   //   browserWSEndpoint: getWsUrl(),
   // });
-
   // const page = await browser.newPage();
   // await page.setViewport({ width: 1200, height: 600, deviceScaleFactor: 1 });
   // return page;
 }
+
+function createRootDir(dirs) {
+  dirs.map((dir) => {
+    const dirPath = path.resolve(__dirname, `../${dir}`);
+    if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath);
+    }
+  });
+}
+
 module.exports = {
   strRemoveImg,
   getWsUrl,
   getInfo,
   sleep,
   initPage,
+  createRootDir,
 };
