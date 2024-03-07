@@ -22,7 +22,7 @@ const outputPath = path.resolve(__dirname, "../data/not-follow-me.json");
 
   const page = await browser.newPage();
   await page.setViewport({ width: 1200, height: 600, deviceScaleFactor: 1 });
-  const allFollowList = require();
+  const allFollowList = require("../data/follow-list.json");
 
   const eachFollow = allFollowList.all.filter(
     (item) => item.status === "相互关注"

@@ -6,7 +6,8 @@
   "scripts": {
     "follow": "node ./src/get-follow-list.js",
     "get-not": "node ./src/get-not-follow-me.js",
-    "analysis": "node ./src/analysis-follow.js"
+    "analysis": "node ./src/analysis-follow.js",
+    "find-unfollow": "node ./src/find-unfollow.js"
   },
   "keywords": [],
   "author": "",
@@ -23,5 +24,8 @@
     "puppeteer-core": "^19.9.0",
     "shelljs": "^0.8.5",
     "single-line-log": "^1.1.2"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   }
 }
