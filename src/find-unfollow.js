@@ -62,9 +62,11 @@ async function run() {
               const status = element.querySelector(
                 ".DrgO6Dle .mqZgWvzs"
               ).textContent;
+              const link = element.querySelector(".iAqs9BfT .hY8lWHgA").href;
               curData.push({
                 nickname, // 昵称
                 status, // 关注状态
+                link,
               });
             });
             return { ...result, isFoot: true, curData };
@@ -123,5 +125,22 @@ function analysis() {
   }
   const localData = require(filePath);
 
-  localData.filter((m) => m.status === "已关注").map((m) => console.log(m));
+  const f = localData.filter((m) => m.status === "已关注");
+
+  console.log(f.length, "个不互关");
+
+  fs.writeFile(
+    path.join(folderPath, "unfollow-result.json"),
+    JSON.stringify(f),
+    (err) => {
+      if (err) {
+        log("Error writing JSON file:", err);
+      } else {
+        log(
+          "JSON file saved successfully!",
+          path.join(folderPath, "unfollow-result.json")
+        );
+      }
+    }
+  );
 }
