@@ -1,4 +1,4 @@
-# puppeteer爬取抖音粉丝数据
+# puppeteer 爬取抖音粉丝数据
 
 ## 更新
 
@@ -8,7 +8,6 @@
 - get-follow-list.js 为获取所有关注的脚本
 - get-not-follow-list.js 获取我单向关注的博主列表
 - analysis-follow 分析获取结果
-- analysis-url.js 爬取原神抽卡日志-demo
 
 ## 使用说明
 
@@ -36,8 +35,6 @@ C:\Program Files\Google\Chrome\Application\chrome.exe --remote-debugging-port=92
 修改 config.js 里的 ws 地址
 
 ![image-20240309135441612](https://raw.githubusercontent.com/xxxsjan/pic-bed/main/image-20240309135441612.png)
-
-homeUrl 是你主页地址，默认是<https://www.douyin.com/user/self>就可以了
 
 ## puppeteer 方法
 
