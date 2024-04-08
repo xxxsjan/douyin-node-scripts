@@ -21,7 +21,7 @@
 
 "C:\Program Files\Google\Chrome\Application\chrome.exe" --remote-debugging-port=9222
 
-方式二：写在快捷方式的属性里的目标里面，写在目标里面 前面的双引号就不要开了
+方式二：写在快捷方式的属性里的目标里面，写在目标里面 前面的双引号就不要了
 
 C:\Program Files\Google\Chrome\Application\chrome.exe --remote-debugging-port=9222
 

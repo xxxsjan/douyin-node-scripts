@@ -6,11 +6,10 @@ const fs = require("fs");
 var log = require("single-line-log").stdout;
 const path = require("path");
 
-const { getWsUrl } = require("../utils");
+const { getWsUrl } = require("../../utils");
 
 (async () => {
   await run();
-  analysis();
 })();
 async function run() {
   try {
@@ -26,6 +25,8 @@ async function run() {
 
     const followCountDom = ".sCnO6dhe";
     const followCount = await page.$eval(followCountDom, (el) => el.innerHTML);
+
+    const maxNum = Number(followCount);
 
     fansDom.click();
     //  列表容器
@@ -76,7 +77,7 @@ async function run() {
         },
         {
           // maxNum: 123,
-          maxNum: Number(followCount), // 最大显示个数，参考关注数
+          maxNum, // 最大显示个数，参考关注数
           selector: {
             scrollWrapper: wrapperElSelector, // 容器class
             scrollItem: ".QxZvDLx8", // 子项class
@@ -89,11 +90,12 @@ async function run() {
         isFoot = true;
         data = _data;
       }
+      console.log("🚀  :", _data.renderNum, followCount, maxNum);
     }
 
     data.curData && saveArray(data.curData);
-    await browser.close();
     return;
+    // await browser.close();
     // process.exit();
   } catch (error) {
     log("error: ", error);
@@ -101,7 +103,7 @@ async function run() {
 }
 function saveArray(data) {
   const jsonData = JSON.stringify(data);
-  const folderPath = path.resolve(process.cwd(), "cache");
+  const folderPath = path.resolve(__dirname, "cache");
   const filePath = path.join(folderPath, "all.json");
   if (!fs.existsSync(folderPath)) {
     fs.mkdirSync(folderPath, { recursive: true });
@@ -110,37 +112,7 @@ function saveArray(data) {
     if (err) {
       log("Error writing JSON file:", err);
     } else {
-      log("JSON file saved successfully!");
+      log("JSON file saved successfully!" + filePath);
     }
   });
-}
-
-function analysis() {
-  const folderPath = path.resolve(process.cwd(), "cache");
-  const filePath = path.join(folderPath, "all.json");
-  // 判断文件是否存在
-  if (!fs.existsSync(filePath)) {
-    console.log("文件不存在");
-    return;
-  }
-  const localData = require(filePath);
-
-  const f = localData.filter((m) => m.status === "已关注");
-
-  console.log(f.length, "个不互关");
-
-  fs.writeFile(
-    path.join(folderPath, "unfollow-result.json"),
-    JSON.stringify(f),
-    (err) => {
-      if (err) {
-        log("Error writing JSON file:", err);
-      } else {
-        log(
-          "JSON file saved successfully!",
-          path.join(folderPath, "unfollow-result.json")
-        );
-      }
-    }
-  );
 }

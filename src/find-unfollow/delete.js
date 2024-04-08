@@ -1,20 +1,23 @@
 const puppeteer = require("puppeteer");
 const { delay } = require("bluebird");
 const ms = require("ms");
-
-const fs = require("fs");
-var log = require("single-line-log").stdout;
 const path = require("path");
+var log = require("single-line-log").stdout;
 
-const { getWsUrl } = require("../utils");
+const { getWsUrl } = require("../../utils");
 
 (async () => {
   await run();
 })();
+
+const folderPath = path.resolve(__dirname, "cache");
+const lacalPath = path.join(folderPath, "unfollow-result.json");
+
+const unfollowData = require(lacalPath) || [];
+console.log("unfollowData: ", unfollowData);
+
 async function run() {
   try {
-    const unfollowData = require("../cache/unfollow-result.json") || [];
-
     if (unfollowData.length === 0) {
       return;
     }
@@ -80,6 +83,6 @@ async function run() {
 
     process.exit();
   } catch (error) {
-    log("error: ", error);
+    log("浏览器问题: ");
   }
 }
