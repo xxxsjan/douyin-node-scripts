@@ -1,14 +1,5 @@
 # puppeteer 爬取抖音粉丝数据
 
-## 更新
-
-- 2024 年 3 月 9 日： 更新移除不互关脚本 执行 node ./src/delete-unfollow.js
-- 2024 年 3 月 8 日 ： 更新找出没互关的脚本 执行 node ./src/find-unfollow.js
-
-- get-follow-list.js 为获取所有关注的脚本
-- get-not-follow-list.js 获取我单向关注的博主列表
-- analysis-follow 分析获取结果
-
 ## 使用说明
 
 自己的谷歌浏览器先登录好抖音号
@@ -43,3 +34,14 @@ page.waitForSelector('selector') 等待对应的 dom 渲染完
 page.evaluate(()=>{window 环境代码},params1:any)
 
 page.$eval('selector', (el) => {})
+
+## 更新记录
+
+- 2024 年 4 月 9 日 ： 脚本位置更新
+
+- 2024 年 3 月 9 日： 更新移除不互关脚本 执行 node ./src/delete-unfollow.js
+- 2024 年 3 月 8 日 ： 更新找出没互关的脚本 执行 node ./src/find-unfollow.js
+
+- get-follow-list.js 为获取所有关注的脚本
+- get-not-follow-list.js 获取我单向关注的博主列表
+- analysis-follow 分析获取结果
