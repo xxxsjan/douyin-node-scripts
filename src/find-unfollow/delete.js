@@ -6,15 +6,14 @@ var log = require("single-line-log").stdout;
 
 const { getWsUrl } = require("../../utils");
 
-(async () => {
-  await run();
-})();
-
 const folderPath = path.resolve(__dirname, "cache");
 const lacalPath = path.join(folderPath, "unfollow-result.json");
 
 const unfollowData = require(lacalPath) || [];
-console.log("unfollowData: ", unfollowData);
+
+(async () => {
+  await run();
+})();
 
 async function run() {
   try {
@@ -58,20 +57,19 @@ async function run() {
         const nameEl = document.querySelector(
           ".ds1zWG9C .j5WZzJdp span span span span"
         );
+        const fensiText = fsEl.textContent;
         if (
-          fsEl.textContent &&
-          (fsEl.textContent.includes("万") || fsEl.textContent.includes("亿"))
+          fensiText &&
+          (fensiText.includes("万") || fensiText.includes("亿"))
         ) {
-          return (
-            nameEl.textContent + "," + fsEl.textContent + ",大网红，不删除❌"
-          );
+          return nameEl.textContent + "," + fensiText + ",大网红，不删除❌";
         } else {
           // 已关注按钮
           const el = document.querySelector(
             ".ZBejQ5yK.WXPQLGYI.UNy4jPPO.ajC8cNxV.I4tJiW0Q.EE_LhMCF"
           );
           el && el.click();
-          return nameEl.textContent + "已移除✅";
+          return nameEl.textContent + "已移除✅" + "," + fensiText;
         }
       }, {});
       console.log(msg, Date.now());
