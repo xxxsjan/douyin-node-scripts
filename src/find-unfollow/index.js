@@ -8,9 +8,8 @@ const path = require("path");
 
 const { getWsUrl } = require("../../utils");
 
-(async () => {
-  await run();
-})();
+run();
+
 async function run() {
   try {
     const browser = await puppeteer.connect({
@@ -94,9 +93,9 @@ async function run() {
     }
 
     data.curData && saveArray(data.curData);
-    return;
+ 
     // await browser.close();
-    // process.exit();
+    process.exit();
   } catch (error) {
     log("error: ", error);
   }

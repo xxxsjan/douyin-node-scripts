@@ -11,9 +11,7 @@ const lacalPath = path.join(folderPath, "unfollow-result.json");
 
 const unfollowData = require(lacalPath) || [];
 
-(async () => {
-  await run();
-})();
+run();
 
 async function run() {
   try {

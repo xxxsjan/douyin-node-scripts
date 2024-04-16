@@ -3,6 +3,7 @@ var log = require("single-line-log").stdout;
 const path = require("path");
 
 analysis();
+
 function analysis() {
   const folderPath = path.resolve(__dirname, "cache");
   const filePath = path.join(folderPath, "all.json");
