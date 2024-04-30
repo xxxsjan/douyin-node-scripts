@@ -7,17 +7,13 @@ var log = require("single-line-log").stdout;
 const path = require("path");
 
 const { getWsUrl } = require("../../utils");
+const { createPuppeteer } = require("../../utils/createPuppeteer");
 
 run();
 
 async function run() {
   try {
-    const browser = await puppeteer.connect({
-      browserWSEndpoint: getWsUrl(),
-    });
-    const page = await browser.newPage();
-
-    await page.setViewport({ width: 1200, height: 600, deviceScaleFactor: 1 });
+    const { browser, page } = await createPuppeteer();
 
     await page.goto("https://www.douyin.com/user/self");
     const fansDom = await page.waitForSelector(".WetwxGAE.GQQEtJnJ");
@@ -93,7 +89,7 @@ async function run() {
     }
 
     data.curData && saveArray(data.curData);
- 
+
     // await browser.close();
     process.exit();
   } catch (error) {

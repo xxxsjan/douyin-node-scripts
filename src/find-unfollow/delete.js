@@ -5,7 +5,7 @@ const path = require("path");
 var log = require("single-line-log").stdout;
 
 const { getWsUrl } = require("../../utils");
-
+const { createPuppeteer } = require("../../utils/createPuppeteer");
 const folderPath = path.resolve(__dirname, "cache");
 const lacalPath = path.join(folderPath, "unfollow-result.json");
 
@@ -18,13 +18,7 @@ async function run() {
     if (unfollowData.length === 0) {
       return;
     }
-
-    const browser = await puppeteer.connect({
-      browserWSEndpoint: getWsUrl(),
-    });
-    const page = await browser.newPage();
-
-    await page.setViewport({ width: 1200, height: 600, deviceScaleFactor: 1 });
+    const { browser, page } = await createPuppeteer();
 
     await walk(0, unfollowData.length - 1);
 

@@ -65,15 +65,6 @@ function sleep(timeout) {
   });
 }
 
-async function initPage(page) {
-  // const browser = await puppeteer.connect({
-  //   browserWSEndpoint: getWsUrl(),
-  // });
-  // const page = await browser.newPage();
-  // await page.setViewport({ width: 1200, height: 600, deviceScaleFactor: 1 });
-  // return page;
-}
-
 function createRootDir(dirs) {
   dirs.map((dir) => {
     const dirPath = path.resolve(__dirname, `../${dir}`);
@@ -88,6 +79,5 @@ module.exports = {
   getWsUrl,
   getInfo,
   sleep,
-  initPage,
   createRootDir,
 };

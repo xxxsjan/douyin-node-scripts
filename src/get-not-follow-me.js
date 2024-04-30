@@ -9,19 +9,14 @@ const path = require("path");
 
 const { selector } = require("../config");
 const { getWsUrl, getInfo, strRemoveImg, sleep } = require("../utils");
-
+const { createPuppeteer } = require("../utils/createPuppeteer");
 const outputPath = path.resolve(__dirname, "../data/not-follow-me.json");
 
 (async () => {
   if (!fs.existsSync(path.resolve(__dirname, "../data/follow-list.json"))) {
     return;
   }
-  const browser = await puppeteer.connect({
-    browserWSEndpoint: getWsUrl(),
-  });
-
-  const page = await browser.newPage();
-  await page.setViewport({ width: 1200, height: 600, deviceScaleFactor: 1 });
+  const { browser, page } = await createPuppeteer();
   const allFollowList = require("../data/follow-list.json");
 
   const eachFollow = allFollowList.all.filter(

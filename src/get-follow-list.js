@@ -7,17 +7,11 @@ var log = require("single-line-log").stdout;
 
 const { selector, homeUrl } = require("../config");
 const { getWsUrl, getInfo, strRemoveImg, initPage } = require("../utils");
-
+const { createPuppeteer } = require("../utils/createPuppeteer");
 const outputPath = path.resolve(__dirname, "../data/follow-list.json");
 
 async function main() {
-  const browser = await puppeteer.connect({
-    browserWSEndpoint: getWsUrl(),
-  }); // 使用debug浏览器
-  // const browser = await puppeteer.launch({ headless: false});// 打开浏览器
-  const page = await browser.newPage();
-  await page.setViewport({ width: 1200, height: 600, deviceScaleFactor: 1 });
-
+  const { browser, page } = await createPuppeteer();
   const userInfo = await getInfo(page, homeUrl);
   console.log("userInfo: ", JSON.stringify(userInfo));
 
