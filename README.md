@@ -1,4 +1,6 @@
-# puppeteer 爬取抖音粉丝数据
+# puppeteer 抖音 node 脚本
+
+爬取自己账号的粉丝列表，分析关注情况
 
 ## 使用说明
 
@@ -16,16 +18,16 @@
 
 C:\Program Files\Google\Chrome\Application\chrome.exe --remote-debugging-port=9222
 
-![image-20240309135313899](https://raw.githubusercontent.com/xxxsjan/pic-bed/main/image-20240309135313899.png)
+![image-20240309135313899](/doc/image-20240309135313899.png)
 
 进入调试版的谷歌浏览器，查看 ws 地址
 <http://127.0.0.1:9222/json/version>
 
-![image-20240309135409987](https://raw.githubusercontent.com/xxxsjan/pic-bed/main/image-20240309135409987.png)
+![image-20240309135409987](/doc/image-20240309135409987.png)
 
 修改 config.js 里的 ws 地址
 
-![image-20240309135441612](https://raw.githubusercontent.com/xxxsjan/pic-bed/main/image-20240309135441612.png)
+![image-20240309135441612](doc/image-20240309135441612.png)
 
 ## puppeteer 方法
 
@@ -34,14 +36,3 @@ page.waitForSelector('selector') 等待对应的 dom 渲染完
 page.evaluate(()=>{window 环境代码},params1:any)
 
 page.$eval('selector', (el) => {})
-
-## 更新记录
-
-- 2024 年 4 月 9 日 ： 脚本位置更新
-
-- 2024 年 3 月 9 日： 更新移除不互关脚本 执行 node ./src/delete-unfollow.js
-- 2024 年 3 月 8 日 ： 更新找出没互关的脚本 执行 node ./src/find-unfollow.js
-
-- get-follow-list.js 为获取所有关注的脚本
-- get-not-follow-list.js 获取我单向关注的博主列表
-- analysis-follow 分析获取结果
