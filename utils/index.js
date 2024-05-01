@@ -1,6 +1,7 @@
 const { delay } = require("bluebird");
 const fs = require("fs");
 const path = require("path");
+
 // 有图片的昵称转成普通的
 function strRemoveImg(name) {
   if (!name) return "";
@@ -74,10 +75,27 @@ function createRootDir(dirs) {
   });
 }
 
+// 判断文件夹是否存在
+function createDir(folderPath) {
+  if (!fs.existsSync(folderPath)) {
+    console.log(`${folderPath} 不存在，将创建文件夹`);
+    try {
+      // 创建文件夹
+      fs.mkdirSync(folderPath, { recursive: true });
+      console.log("文件夹创建成功");
+    } catch (err) {
+      console.error("创建文件夹失败:", err);
+    }
+  } else {
+    console.log(`${folderPath} 存在`);
+  }
+}
+
 module.exports = {
   strRemoveImg,
   getWsUrl,
   getInfo,
   sleep,
   createRootDir,
+  createDir,
 };

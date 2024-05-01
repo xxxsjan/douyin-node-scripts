@@ -6,7 +6,7 @@ const path = require("path");
 var log = require("single-line-log").stdout;
 
 const { selector, homeUrl } = require("../config");
-const { getWsUrl, getInfo, strRemoveImg, initPage } = require("../utils");
+const { getInfo, strRemoveImg } = require("../utils");
 const { createPuppeteer } = require("../utils/createPuppeteer");
 const outputPath = path.resolve(__dirname, "../data/follow-list.json");
 
