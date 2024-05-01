@@ -6,6 +6,7 @@ const ms = require("ms");
 var log = require("single-line-log").stdout;
 
 const { createPuppeteer } = require("../../utils/createPuppeteer");
+const { randomNum } = require("../../utils");
 
 run();
 
@@ -28,12 +29,11 @@ async function run() {
 
     async function walk() {
       while (i < len) {
-        const { live_id } = roomIdData[i];
+        const { live_id, url } = roomIdData[i];
         if (live_id) {
-          const url = `https://live.douyin.com/${live_id}?enter_from_merge=web_chat&enter_method=live_share&room_id=7363320154869992231`;
           await page.goto(url);
         }
-        await delay(ms("10s"));
+        await delay(ms(randomNum(8, 15) + "s"));
 
         const endTime = Date.now();
         let costTime = endTime - startTime;
@@ -45,8 +45,8 @@ async function run() {
           `当前第${i + 1}个`,
           `总共有${len}个`,
         ];
-        log(logArr.join("--"));
-        
+        console.log(logArr.join("--"));
+
         i++;
         await walk();
       }
