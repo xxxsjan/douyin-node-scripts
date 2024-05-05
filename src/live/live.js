@@ -1,4 +1,5 @@
 const { roomIdData } = require("./roomid");
+const pc = require("picocolors");
 
 const { delay } = require("bluebird");
 const ms = require("ms");
@@ -8,7 +9,7 @@ var log = require("single-line-log").stdout;
 const { createPuppeteer } = require("../../utils/createPuppeteer");
 const { randomNum } = require("../../utils");
 
-run();
+// run();
 
 async function run() {
   try {
@@ -45,7 +46,8 @@ async function run() {
           `当前第${i + 1}个`,
           `总共有${len}个`,
         ];
-        console.log(logArr.join("--"));
+
+        console.log(pc.green(logArr.join("--")));
 
         i++;
         await walk();
