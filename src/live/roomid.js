@@ -103,6 +103,8 @@ const roomIdData = [
   { live_id: "112227158195" },
 ];
 
+roomIdData.push({ live_id: "399670989136" }); // 仒零~~
+
 function findDuplicateRoomIds(roomIdData) {
   let roomIds = {};
   let duplicates = [];
