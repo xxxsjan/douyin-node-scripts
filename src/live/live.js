@@ -1,15 +1,12 @@
-const { roomIdData } = require("./roomid");
 const pc = require("picocolors");
-
 const { delay } = require("bluebird");
 const ms = require("ms");
 
-var log = require("single-line-log").stdout;
-
+const { roomIdData } = require("./roomid");
 const { createPuppeteer } = require("../../utils/createPuppeteer");
 const { randomNum } = require("../../utils");
 
-// run();
+run();
 
 async function run() {
   try {
@@ -34,6 +31,8 @@ async function run() {
         if (live_id) {
           await page.goto(url);
         }
+
+        // 等待随机延迟，最短8秒，最长15秒
         await delay(ms(randomNum(8, 15) + "s"));
 
         const endTime = Date.now();
@@ -57,6 +56,6 @@ async function run() {
 
     process.exit();
   } catch (error) {
-    log("error: ", error);
+    console.log(pc.bgRed(error));
   }
 }
