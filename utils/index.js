@@ -16,28 +16,48 @@ function strRemoveImg(name) {
   return res;
 }
 async function getWsUrl() {
-  const response = await prompts({
-    type: "text",
-    name: "ws",
-    message: "ws地址",
-  });
+  let cacheData, defaultWs;
 
-  console.log(response);
-  if (!response.ws) {
-    console.log(pc.bgRed("ws地址不能为空"));
+  const cachePath = path.resolve(__dirname, "../cache.json");
+
+  if (fs.existsSync(cachePath)) {
+    cacheData = fs.readFileSync(cachePath, { encoding: "utf-8" });
+    defaultWs = JSON.parse(cacheData).ws;
   }
 
-  const wsUrl = response.ws;
-  const url = new URL(wsUrl);
-  url.searchParams.set("stealth", "true");
-  // url.searchParams.set("headLess", "false");
-  url.searchParams.set("timeout", "600000");
-  url.searchParams.set("--disable-notifications", "true");
-  url.searchParams.set("--disable-dev-shm-usage", "true");
+  try {
+    const response = await prompts({
+      type: "text",
+      name: "ws",
+      message: "ws地址",
+      initial: defaultWs,
+      validate: (value) => {
+        if (value && !value.includes("ws://")) {
+          return "ws地址格式不正确";
+        }
+        return true;
+      },
+    });
 
-  const result = url.toString();
+    if (!response.ws) {
+      console.log(pc.bgRed("ws地址不能为空"));
+      return "ws地址不能为空";
+    }
+    fs.writeFileSync(cachePath, JSON.stringify(response, null, 2), "utf8");
+    const wsUrl = response.ws;
+    const url = new URL(wsUrl);
+    url.searchParams.set("stealth", "true");
+    // url.searchParams.set("headLess", "false");
+    url.searchParams.set("timeout", "600000");
+    url.searchParams.set("--disable-notifications", "true");
+    url.searchParams.set("--disable-dev-shm-usage", "true");
 
-  return result;
+    const result = url.toString();
+
+    return result;
+  } catch (error) {
+    console.log("error: ", error);
+  }
 }
 
 async function getInfo(page, url) {

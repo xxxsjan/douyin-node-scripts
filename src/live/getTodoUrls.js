@@ -1,5 +1,6 @@
 const fs = require("fs");
 const { roomIdData } = require("./roomid");
+const { shuffleArray } = require("../../utils");
 
 module.exports.getTodoUrls = () => {
   // return roomIdData;
@@ -23,10 +24,10 @@ module.exports.getTodoUrls = () => {
     return {
       url,
       type: isLive ? "live_room" : "home_page",
-      id: isLive ? new URL(url).pathname.replace("/", "") : "",
+      live_id: isLive ? new URL(url).pathname.replace("/", "") : "",
     };
   });
 
   // fs.writeFileSync("./todo.json", JSON.stringify(todoList, null, 2));
-  return todoList;
+  return shuffleArray(todoList);
 };

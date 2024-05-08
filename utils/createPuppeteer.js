@@ -1,4 +1,5 @@
 const puppeteer = require("puppeteer");
+const fs = require("fs");
 const { getWsUrl } = require("./index");
 
 async function createPuppeteer() {
