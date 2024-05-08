@@ -25,10 +25,6 @@ C:\Program Files\Google\Chrome\Application\chrome.exe --remote-debugging-port=92
 
 ![image-20240309135409987](/doc/image-20240309135409987.png)
 
-修改 config.js 里的 ws 地址
-
-![image-20240309135441612](doc/image-20240309135441612.png)
-
 ## puppeteer 方法
 
 page.waitForSelector('selector') 等待对应的 dom 渲染完

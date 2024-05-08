@@ -1,6 +1,8 @@
 const { delay } = require("bluebird");
 const fs = require("fs");
 const path = require("path");
+const prompts = require("prompts");
+const pc = require("picocolors");
 
 // 有图片的昵称转成普通的
 function strRemoveImg(name) {
@@ -13,15 +15,29 @@ function strRemoveImg(name) {
   );
   return res;
 }
-function getWsUrl() {
-  const wsUrl = require("../config").ws;
+async function getWsUrl() {
+  const response = await prompts({
+    type: "text",
+    name: "ws",
+    message: "ws地址",
+  });
+
+  console.log(response);
+  if (!response.ws) {
+    console.log(pc.bgRed("ws地址不能为空"));
+  }
+
+  const wsUrl = response.ws;
   const url = new URL(wsUrl);
   url.searchParams.set("stealth", "true");
   // url.searchParams.set("headLess", "false");
   url.searchParams.set("timeout", "600000");
   url.searchParams.set("--disable-notifications", "true");
   url.searchParams.set("--disable-dev-shm-usage", "true");
-  return url.toString();
+
+  const result = url.toString()
+
+  return result;
 }
 
 async function getInfo(page, url) {

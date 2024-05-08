@@ -56,6 +56,6 @@ async function run() {
 
     process.exit();
   } catch (error) {
-    console.log(pc.bgRed(error));
+    console.log("live error", pc.bgRed(error));
   }
 }
