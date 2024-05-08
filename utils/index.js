@@ -35,7 +35,7 @@ async function getWsUrl() {
   url.searchParams.set("--disable-notifications", "true");
   url.searchParams.set("--disable-dev-shm-usage", "true");
 
-  const result = url.toString()
+  const result = url.toString();
 
   return result;
 }
@@ -111,6 +111,17 @@ function randomNum(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
+function shuffleArray(array) {
+  const newArray = array.slice(); // 创建原数组的副本
+
+  for (let i = newArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  }
+
+  return newArray;
+}
+
 module.exports = {
   strRemoveImg,
   getWsUrl,
@@ -119,4 +130,5 @@ module.exports = {
   createRootDir,
   createDir,
   randomNum,
+  shuffleArray,
 };

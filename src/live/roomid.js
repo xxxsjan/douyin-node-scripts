@@ -1,4 +1,5 @@
 const fs = require("fs");
+const { shuffleArray } = require("../../utils");
 
 const text = fs.readFileSync("./roomId.txt", { encoding: "utf-8" });
 
@@ -40,19 +41,9 @@ const createUrl = () =>
   roomIdData.map((item) => ({
     ...item,
     url: `https://live.douyin.com/${item.live_id}?enter_from_merge=web_chat&enter_method=live_share&room_id=7363320154869992231`,
+    type: "live_room",
   }));
 
-// 打乱
-function shuffleArray(array) {
-  const newArray = array.slice(); // 创建原数组的副本
-
-  for (let i = newArray.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-  }
-
-  return newArray;
-}
 module.exports = {
   roomIdData: shuffleArray(createUrl()),
 };
