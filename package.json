@@ -7,7 +7,7 @@
     "start": "node ./src/find-unfollow/index.js",
     "analysis": "node ./src/find-unfollow/analysis.js",
     "delete": "node ./src/find-unfollow/delete.js",
-    "build:live":"pkg ./src/live/live.js --target win"
+    "build:live":"pkg ./src/live/live.js --target win -o ./dist/dy-live.exe"
   },
   "keywords": [],
   "author": "",
