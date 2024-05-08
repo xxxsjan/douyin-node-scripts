@@ -1,12 +1,29 @@
 const pc = require("picocolors");
 const { delay } = require("bluebird");
 const ms = require("ms");
-
+const fs = require("fs");
+const path = require("path");
 const { createPuppeteer } = require("../../utils/createPuppeteer");
 const { randomNum } = require("../../utils");
 const { getTodoUrls } = require("./getTodoUrls");
 
 const roomIdData = getTodoUrls();
+
+const hadViewPath = path.resolve(__dirname, "./hadView.json");
+
+if (!fs.existsSync(hadViewPath)) {
+  fs.writeFileSync(hadViewPath, "[]");
+}
+
+let hadView = fs.readFileSync(hadViewPath, "utf-8");
+hadView = JSON.parse(hadView);
+
+function saveHadView(data) {
+  hadView.push(data);
+  console.log(data, "已观看", hadView.length);
+  fs.writeFileSync(hadViewPath, JSON.stringify(hadView));
+}
+
 run();
 
 async function run() {
@@ -16,23 +33,36 @@ async function run() {
     const len = roomIdData.length;
     let i = 0;
 
-    async function walk() {
-      while (i < len) {
-        const { live_id, url, type } = roomIdData[i];
+    while (i < len) {
+      const itemData = roomIdData[i];
+      const { live_id, url, type } = itemData;
+      console.log("url: ", url);
 
-        if (type === "live_room") {
-          await page.goto(url);
+      if (type === "live_room") {
+        if (hadView.find((f) => f.live_id === live_id)) {
+          console.log(live_id, "已观看");
+          i++;
+          continue;
+        } else {
+          await await handleToLiveRoom(page, {
+            live_url: url,
+            live_id,
+            url,
+            living: true,
+            i,
+            len,
+          });
 
-          // 等待随机延迟，最短8秒，最长15秒
-          const waitTime = randomNum(8, 15) + "s";
-
-          logStr({ username: live_id, living: true, i, len, waitTime });
-
-          await delay(ms(waitTime));
+          i++;
+        }
+      } else {
+        if (hadView.find((f) => f.home_url === url)) {
+          console.log(url, "已观看");
+          i++;
+          continue;
         } else {
           // 主页
           await page.goto(url);
-
           await page.waitForSelector(".BhdsqJgJ");
 
           const usernameSelector = ".j5WZzJdp span span span span";
@@ -40,7 +70,7 @@ async function run() {
             usernameSelector,
             (el) => el.innerText
           );
-
+          console.log(username);
           // .BhdsqJgJ .ZgMmtbts 未直播
           // .BhdsqJgJ .KZ_xK377 在直播
 
@@ -52,20 +82,29 @@ async function run() {
               ".BhdsqJgJ a.hY8lWHgA",
               (el) => el.href
             );
-            await page.goto(href);
-            const waitTime = randomNum(8, 15) + "s";
-
-            logStr({ username, living, i, len, waitTime });
-            await delay(ms(waitTime));
+            // console.log(href);
+            const pathname = new URL(href).pathname;
+            const live_id = pathname.replace("/", "");
+            if (hadView.find((f) => f.live_id === live_id)) {
+              console.log(live_id, "已观看");
+              i++;
+              continue;
+            }
+            await handleToLiveRoom(page, {
+              live_url: href,
+              live_id,
+              url,
+              living,
+              i,
+              len,
+            });
           } else {
             logStr({ username, living, i, len });
           }
+          i++;
         }
-        i++;
-        await walk();
       }
     }
-    await walk();
 
     process.exit();
   } catch (error) {
@@ -74,8 +113,6 @@ async function run() {
 }
 
 function logStr({ username = "", living, i, len, waitTime = "" }) {
-  // console.log("username: ", username);
-  // username = username || "";
   if (!living) {
     console.log(pc.yellow(`${i + 1}/${len} ${username} 未开播`));
     return;
@@ -115,4 +152,21 @@ class Timer {
   getCostTime() {
     return this.costTime;
   }
+}
+
+async function handleToLiveRoom(
+  page,
+  { live_url, live_id, url, living, i, len }
+) {
+  await page.goto(live_url);
+  await page.waitForSelector(".jpguc9PK a");
+  const username = await page.$eval(".jpguc9PK a", (el) => el.innerText);
+  saveHadView({ live_id, username, home_url: url });
+
+  console.log("live_id: ", live_id);
+
+  const waitTime = randomNum(8, 15) + "s";
+
+  logStr({ username, living, i, len, waitTime, live_id });
+  await delay(ms(waitTime));
 }
