@@ -15,50 +15,6 @@ function strRemoveImg(name) {
   );
   return res;
 }
-async function getWsUrl() {
-  let cacheData, defaultWs;
-
-  const cachePath = path.resolve(__dirname, "../cache.json");
-
-  if (fs.existsSync(cachePath)) {
-    cacheData = fs.readFileSync(cachePath, { encoding: "utf-8" });
-    defaultWs = JSON.parse(cacheData).ws;
-  }
-
-  try {
-    const response = await prompts({
-      type: "text",
-      name: "ws",
-      message: "ws地址",
-      initial: defaultWs,
-      validate: (value) => {
-        if (value && !value.includes("ws://")) {
-          return "ws地址格式不正确";
-        }
-        return true;
-      },
-    });
-
-    if (!response.ws) {
-      console.log(pc.bgRed("ws地址不能为空"));
-      return "ws地址不能为空";
-    }
-    fs.writeFileSync(cachePath, JSON.stringify(response, null, 2), "utf8");
-    const wsUrl = response.ws;
-    const url = new URL(wsUrl);
-    url.searchParams.set("stealth", "true");
-    // url.searchParams.set("headLess", "false");
-    url.searchParams.set("timeout", "600000");
-    url.searchParams.set("--disable-notifications", "true");
-    url.searchParams.set("--disable-dev-shm-usage", "true");
-
-    const result = url.toString();
-
-    return result;
-  } catch (error) {
-    console.log("error: ", error);
-  }
-}
 
 async function getInfo(page, url) {
   await page.goto(url);
@@ -104,7 +60,7 @@ function sleep(timeout) {
 
 function createRootDir(dirs) {
   dirs.map((dir) => {
-    const dirPath = path.resolve(__dirname, `../${dir}`);
+    const dirPath = path.resolve(process.cwd(), `${dir}`);
     if (!fs.existsSync(dirPath)) {
       fs.mkdirSync(dirPath);
     }
@@ -127,28 +83,11 @@ function createDir(folderPath) {
   }
 }
 
-function randomNum(min, max) {
-  return Math.floor(Math.random() * (max - min + 1) + min);
-}
-
-function shuffleArray(array) {
-  const newArray = array.slice(); // 创建原数组的副本
-
-  for (let i = newArray.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-  }
-
-  return newArray;
-}
-
 module.exports = {
   strRemoveImg,
-  getWsUrl,
+
   getInfo,
   sleep,
   createRootDir,
   createDir,
-  randomNum,
-  shuffleArray,
 };

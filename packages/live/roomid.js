@@ -1,8 +1,10 @@
 const fs = require("fs");
-const { shuffleArray } = require("../../utils");
+const path = require("path");
 
-const text = fs.readFileSync("./roomId.txt", { encoding: "utf-8" });
-
+const text = fs.readFileSync(path.resolve(__dirname, "./assets/roomId.txt"), {
+  encoding: "utf-8",
+});
+console.log(text);
 const roomIdData = text
   .replace(/(\r?\n)/g, ",")
   .split(",")
@@ -47,3 +49,13 @@ const createUrl = () =>
 module.exports = {
   roomIdData: shuffleArray(createUrl()),
 };
+function shuffleArray(array) {
+  const newArray = array.slice(); // 创建原数组的副本
+
+  for (let i = newArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  }
+
+  return newArray;
+}

@@ -3,8 +3,6 @@ const { delay } = require("bluebird");
 const ms = require("ms");
 const path = require("path");
 var log = require("single-line-log").stdout;
-
-const { getWsUrl } = require("../../utils");
 const { createPuppeteer } = require("../../utils/createPuppeteer");
 const folderPath = path.resolve(__dirname, "cache");
 const lacalPath = path.join(folderPath, "unfollow-result.json");

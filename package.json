@@ -6,8 +6,7 @@
   "scripts": {
     "start": "node ./src/find-unfollow/index.js",
     "analysis": "node ./src/find-unfollow/analysis.js",
-    "delete": "node ./src/find-unfollow/delete.js",
-    "build:live":"pkg ./src/live/live.js --target win -o ./dist/dy-live.exe"
+    "delete": "node ./src/find-unfollow/delete.js"
   },
   "keywords": [],
   "author": "",

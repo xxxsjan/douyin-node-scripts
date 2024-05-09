@@ -6,7 +6,7 @@ const fs = require("fs");
 var log = require("single-line-log").stdout;
 const path = require("path");
 
-const { getWsUrl } = require("../../utils");
+
 const { createPuppeteer } = require("../../utils/createPuppeteer");
 
 run();

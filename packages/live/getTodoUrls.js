@@ -1,11 +1,12 @@
 const fs = require("fs");
-const { roomIdData } = require("./roomid");
-const { shuffleArray } = require("../../utils");
+const path = require("path");
 
-module.exports.getTodoUrls = () => {
-  // return roomIdData;
+const { shuffleArray } = require("../utils");
 
-  const res = fs.readFileSync("./2_Headers.txt", { encoding: "utf-8" });
+const getTodoUrls = () => {
+  const httpLogFile = path.resolve(__dirname, "assets/2_Headers.txt");
+  console.log('httpLogFile: ', httpLogFile);
+  const res = fs.readFileSync(httpLogFile, { encoding: "utf-8" });
 
   const users = res.match(
     /(?<=GET )https:\/\/www.douyin\.com\/user\/.+(?= HTTP)/g
@@ -28,6 +29,9 @@ module.exports.getTodoUrls = () => {
     };
   });
 
-  // fs.writeFileSync("./todo.json", JSON.stringify(todoList, null, 2));
   return shuffleArray(todoList);
+};
+
+module.exports = {
+  getTodoUrls,
 };

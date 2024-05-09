@@ -3,20 +3,22 @@ const { delay } = require("bluebird");
 const ms = require("ms");
 const fs = require("fs");
 const path = require("path");
-const { createPuppeteer } = require("../../utils/createPuppeteer");
-const { randomNum } = require("../../utils");
+
+const { createPuppeteer } = require("../utils/createPuppeteer");
+
 const { getTodoUrls } = require("./getTodoUrls");
 
 const roomIdData = getTodoUrls();
 
-const hadViewPath = path.resolve(__dirname, "./hadView.json");
+const hadViewPath = path.resolve(process.cwd(), "./hadView.json");
 
+let hadView = [];
 if (!fs.existsSync(hadViewPath)) {
   fs.writeFileSync(hadViewPath, "[]");
+} else {
+  hadView = fs.readFileSync(hadViewPath, "utf-8");
+  hadView = JSON.parse(hadView);
 }
-
-let hadView = fs.readFileSync(hadViewPath, "utf-8");
-hadView = JSON.parse(hadView);
 
 function saveHadView(data) {
   hadView.push(data);
@@ -24,12 +26,13 @@ function saveHadView(data) {
   fs.writeFileSync(hadViewPath, JSON.stringify(hadView));
 }
 
-run();
-
+(async function () {
+  await run();
+})();
 async function run() {
   try {
     const { page } = await createPuppeteer();
-
+    return;
     const len = roomIdData.length;
     let i = 0;
 
@@ -106,7 +109,7 @@ async function run() {
       }
     }
 
-    process.exit();
+    // process.exit();
   } catch (error) {
     console.log("live error", pc.bgRed(error));
   }
@@ -169,4 +172,8 @@ async function handleToLiveRoom(
 
   logStr({ username, living, i, len, waitTime, live_id });
   await delay(ms(waitTime));
+}
+
+function randomNum(min, max) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
 }
