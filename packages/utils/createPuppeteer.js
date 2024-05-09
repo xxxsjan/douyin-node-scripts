@@ -8,7 +8,7 @@ async function getWsUrl() {
   let cacheData, defaultWs;
 
   const cachePath = path.resolve(process.cwd(), "config.json");
-  console.log('cachePath: ', cachePath);
+  console.log("cachePath: ", cachePath);
 
   if (fs.existsSync(cachePath)) {
     cacheData = fs.readFileSync(cachePath, { encoding: "utf-8" });
@@ -35,8 +35,8 @@ async function getWsUrl() {
     }
 
     fs.writeFileSync(cachePath, JSON.stringify(response, null, 2), "utf8");
-    console.log('已更新ws');
-    
+    console.log("已更新ws");
+
     const wsUrl = response.ws;
     const url = new URL(wsUrl);
     url.searchParams.set("stealth", "true");
@@ -54,20 +54,24 @@ async function getWsUrl() {
 }
 
 async function createPuppeteer() {
-  const browserWSEndpoint = await getWsUrl();
+  try {
+    const browserWSEndpoint = await getWsUrl();
 
-  const browser = await puppeteer.connect({
-    browserWSEndpoint,
-  }); // 使用debug浏览器
+    const browser = await puppeteer.connect({
+      browserWSEndpoint,
+    }); // 使用debug浏览器
 
-  // const browser = await puppeteer.launch({ headless: false});// 打开浏览器
-  const page = await browser.newPage();
+    // const browser = await puppeteer.launch({ headless: false});// 打开浏览器
+    const page = await browser.newPage();
 
-  await page.setViewport({ width: 1200, height: 600, deviceScaleFactor: 1 });
-  return {
-    browser,
-    page,
-  };
+    await page.setViewport({ width: 1200, height: 600, deviceScaleFactor: 1 });
+    return {
+      browser,
+      page,
+    };
+  } catch (error) {
+    console.log("createPuppeteer error: ", error);
+  }
 }
 
 module.exports = { createPuppeteer };

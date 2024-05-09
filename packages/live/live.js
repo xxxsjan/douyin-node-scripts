@@ -4,26 +4,43 @@ const ms = require("ms");
 const fs = require("fs");
 const path = require("path");
 
-const { createPuppeteer } = require("../utils/createPuppeteer");
+const { createPuppeteer } = require("utils/createPuppeteer");
 
 const { getTodoUrls } = require("./getTodoUrls");
 
 const roomIdData = getTodoUrls();
 
-const hadViewPath = path.resolve(process.cwd(), "./hadView.json");
+if (!fs.existsSync(path.resolve(process.cwd(), "./cache"))) {
+  fs.mkdirSync(path.resolve(process.cwd(), "./cache"));
+}
+const low = require("lowdb");
+const FileSync = require("lowdb/adapters/FileSync");
+const dbPath = path.resolve(process.cwd(), "./cache/db.json");
+const adapter = new FileSync(dbPath);
+const db = low(adapter);
 
-let hadView = [];
-if (!fs.existsSync(hadViewPath)) {
-  fs.writeFileSync(hadViewPath, "[]");
-} else {
-  hadView = fs.readFileSync(hadViewPath, "utf-8");
-  hadView = JSON.parse(hadView);
+db.defaults({ hadView: [], notLive: [] }).write();
+
+const dataTime = db.get("date").value() || 0;
+
+if (!isSameDay(new Date(), new Date(dataTime))) {
+  db.set("date", new Date().getTime()).write();
+  db.set("hadView", []).write();
+  db.set("notLive", []).write();
+}
+
+const hadView = db.get("hadView").value();
+
+// const notLive = db.get("notLive").value();
+
+function saveNotLive(data) {
+  db.get("notLive").push(data).write();
 }
 
 function saveHadView(data) {
-  hadView.push(data);
-  console.log(data, "已观看", hadView.length);
-  fs.writeFileSync(hadViewPath, JSON.stringify(hadView));
+  db.get("hadView").push(data).write();
+  const _data = db.get("hadView").value();
+  console.log(data, "已观看", _data.length);
 }
 
 (async function () {
@@ -32,14 +49,12 @@ function saveHadView(data) {
 async function run() {
   try {
     const { page } = await createPuppeteer();
-    return;
     const len = roomIdData.length;
     let i = 0;
 
     while (i < len) {
       const itemData = roomIdData[i];
       const { live_id, url, type } = itemData;
-      console.log("url: ", url);
 
       if (type === "live_room") {
         if (hadView.find((f) => f.live_id === live_id)) {
@@ -102,6 +117,7 @@ async function run() {
               len,
             });
           } else {
+            saveNotLive({ username, home_url: url });
             logStr({ username, living, i, len });
           }
           i++;
@@ -176,4 +192,11 @@ async function handleToLiveRoom(
 
 function randomNum(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
+}
+function isSameDay(date1, date2) {
+  return (
+    date1.getFullYear() === date2.getFullYear() &&
+    date1.getMonth() === date2.getMonth() &&
+    date1.getDate() === date2.getDate()
+  );
 }

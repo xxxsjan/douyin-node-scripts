@@ -23,7 +23,8 @@
     "puppeteer": "^19.9.0",
     "puppeteer-core": "^19.9.0",
     "shelljs": "^0.8.5",
-    "single-line-log": "^1.1.2"
+    "single-line-log": "^1.1.2",
+    "utils": "workspace:^"
   },
   "engines": {
     "node": ">=16.0.0"
