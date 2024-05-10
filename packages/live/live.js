@@ -14,8 +14,13 @@ if (!fs.existsSync(path.resolve(process.cwd(), "./cache"))) {
   fs.mkdirSync(path.resolve(process.cwd(), "./cache"));
 }
 const low = require("lowdb");
+
 const FileSync = require("lowdb/adapters/FileSync");
-const dbPath = path.resolve(process.cwd(), "./cache/db.json");
+const dbPath = path.resolve(
+  process.cwd(),
+  `./cache/db-${getTodayDateString()}.json`
+);
+
 const adapter = new FileSync(dbPath);
 const db = low(adapter);
 
@@ -28,10 +33,6 @@ if (!isSameDay(new Date(), new Date(dataTime))) {
   db.set("hadView", []).write();
   db.set("notLive", []).write();
 }
-
-const hadView = db.get("hadView").value();
-
-// const notLive = db.get("notLive").value();
 
 function saveNotLive(data) {
   db.get("notLive").push(data).write();
@@ -56,6 +57,7 @@ async function run() {
       const itemData = roomIdData[i];
       const { live_id, url, type } = itemData;
 
+      const hadView = db.get("hadView").value();
       if (type === "live_room") {
         if (hadView.find((f) => f.live_id === live_id)) {
           console.log(live_id, "已观看");
@@ -74,8 +76,9 @@ async function run() {
           i++;
         }
       } else {
-        if (hadView.find((f) => f.home_url === url)) {
-          console.log(url, "已观看");
+        const _f = hadView.find((f) => f.home_url === url);
+        if (_f) {
+          console.log(_f.username || _f.live_id || _f.home_url, "已观看");
           i++;
           continue;
         } else {
@@ -117,6 +120,7 @@ async function run() {
               len,
             });
           } else {
+            await delay(ms("1s"));
             saveNotLive({ username, home_url: url });
             logStr({ username, living, i, len });
           }
@@ -124,52 +128,29 @@ async function run() {
         }
       }
     }
-
-    // process.exit();
   } catch (error) {
     console.log("live error", pc.bgRed(error));
   }
 }
 
 function logStr({ username = "", living, i, len, waitTime = "" }) {
+  const hadView = db.get("hadView").value();
+  // const notLive = db.get("notLive").value();
   if (!living) {
-    console.log(pc.yellow(`${i + 1}/${len} ${username} 未开播`));
+    console.log(
+      pc.white(`[${getCurrentTime()}]`),
+      pc.yellow(`${i + 1}/${len} ${username} 未开播 已观看：${hadView.length}`)
+    );
     return;
   } else {
     console.log(
-      pc.green(`${i + 1}/${len} ${username} 观看中。。(${waitTime})`)
+      pc.white(`[${getCurrentTime()}]`),
+      pc.green(
+        `${i + 1}/${len} ${username} 观看中。。(${waitTime}) 已观看：${
+          hadView.length
+        }`
+      )
     );
-  }
-}
-
-// 时间计时类
-class Timer {
-  constructor() {
-    this.startTime = Date.now();
-    this.endTime = 0;
-    this.costTime = 0;
-    // 获取当前时分秒
-    //  const now = new Date();
-    //  const hours = now.getHours();
-    //  const minutes = now.getMinutes();
-    //  const seconds = now.getSeconds();
-    //  const timestamp = now.getTime();
-    // const startTime = timestamp;
-    // const startTimeText = `${hours}:${minutes}:${seconds}`;
-    // const endTime = Date.now();
-    // let costTime = endTime - startTime;
-    // costTime = costTime / 1000;
-  }
-  start() {
-    this.startTime = Date.now();
-  }
-  end() {
-    this.endTime = Date.now();
-    this.costTime = this.endTime - this.startTime;
-    return this.costTime;
-  }
-  getCostTime() {
-    return this.costTime;
   }
 }
 
@@ -199,4 +180,14 @@ function isSameDay(date1, date2) {
     date1.getMonth() === date2.getMonth() &&
     date1.getDate() === date2.getDate()
   );
+}
+// 获取今天年月日字符串
+function getTodayDateString() {
+  const today = new Date();
+  return today.toISOString().split("T")[0];
+}
+// 获取当前时分秒
+function getCurrentTime() {
+  const now = new Date();
+  return now.toLocaleTimeString();
 }

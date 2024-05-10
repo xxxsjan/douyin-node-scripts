@@ -65,6 +65,7 @@ async function createPuppeteer() {
     const page = await browser.newPage();
 
     await page.setViewport({ width: 1200, height: 600, deviceScaleFactor: 1 });
+  
     return {
       browser,
       page,

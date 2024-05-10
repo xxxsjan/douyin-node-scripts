@@ -13,9 +13,9 @@ const getTodoUrls = () => {
   );
   const rooms = res.match(/(?<=GET )https:\/\/live\.douyin\.com\/.+(?= HTTP)/g);
 
-  rooms.push(
-    "https://live.douyin.com/760731992058?enter_from_merge=web_chat&enter_method=live_share&room_id=7365189585246227235"
-  );
+  // rooms.push(
+  //   "https://live.douyin.com/760731992058?enter_from_merge=web_chat&enter_method=live_share&room_id=7365189585246227235"
+  // );
 
   console.log("users: ", users.length);
   console.log("rooms: ", rooms.length);
