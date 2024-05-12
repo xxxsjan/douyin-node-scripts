@@ -4,7 +4,7 @@ const ms = require("ms");
 const fs = require("fs");
 const path = require("path");
 
-const { createPuppeteer } = require("utils/createPuppeteer");
+const { createPuppeteer } = require("utils");
 
 (async function () {
   await run();

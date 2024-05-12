@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const shuffle = require("lodash/shuffle");
 
 const text = fs.readFileSync(path.resolve(__dirname, "./assets/roomId.txt"), {
   encoding: "utf-8",
@@ -43,13 +44,13 @@ const createUrl = () =>
   roomIdData.map((item) => ({
     ...item,
     url: `https://live.douyin.com/${item.live_id}?enter_from_merge=web_chat&enter_method=live_share&room_id=7363320154869992231`,
-    type: "live_room",
+    type: "live_url",
   }));
 
 module.exports = {
-  roomIdData: shuffleArray(createUrl()),
+  roomIdData: shuffle(createUrl()),
 };
-function shuffleArray(array) {
+function shuffle(array) {
   const newArray = array.slice(); // 创建原数组的副本
 
   for (let i = newArray.length - 1; i > 0; i--) {

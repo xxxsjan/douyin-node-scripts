@@ -4,25 +4,23 @@ const ms = require("ms");
 const fs = require("fs");
 const path = require("path");
 
-const { createPuppeteer } = require("utils/createPuppeteer");
-const { log } = require("utils");
+const { createPuppeteer, pclog, createCwdCacheFile } = require("utils");
 
 const { getTodoUrls } = require("./getTodoUrls");
 
-const roomIdData = getTodoUrls();
-if (!fs.existsSync(path.resolve(process.cwd(), "./cache"))) {
-  fs.mkdirSync(path.resolve(process.cwd(), "./cache"));
-}
 const low = require("lowdb");
 const FileSync = require("lowdb/adapters/FileSync");
 
+const roomIdData = getTodoUrls();
+
 const db = initDb();
 
+(async function () {
+  await run();
+})();
+
 function initDb() {
-  const dbPath = path.resolve(
-    process.cwd(),
-    `./cache/db-${getTodayDateString()}.json`
-  );
+  const dbPath = createCwdCacheFile(`db-${getTodayDateString()}.json`);
 
   const adapter = new FileSync(dbPath);
   const db = low(adapter);
@@ -36,7 +34,7 @@ function initDb() {
     db.set("hadView", []).write();
     db.set("notLive", []).write();
   }
-  log.green('db 初始化完成')
+  pclog.green("db 初始化完成");
   return db;
 }
 
@@ -53,11 +51,6 @@ function saveHadView(data) {
   const _data = db.get("hadView").value();
   console.log(data, "已观看", _data.length);
 }
-
-(async function () {
-  // await run();
-})();
-
 async function run() {
   try {
     const { page } = await createPuppeteer();
@@ -69,7 +62,7 @@ async function run() {
       const { live_id, url, type } = itemData;
 
       const hadView = db.get("hadView").value();
-      if (type === "live_room") {
+      if (type === "live_url") {
         if (hadView.find((f) => f.live_id === live_id)) {
           console.log(live_id, "已观看", i, len);
           i++;
@@ -112,13 +105,13 @@ async function run() {
 
           if (living) {
             page.waitForSelector(".BhdsqJgJ a.hY8lWHgA").catch(() => {
-              console.log(".BhdsqJgJ a.hY8lWHgA 获取失败");
+              console.log("直播href 获取失败");
             });
             const href = await page.$eval(
               ".BhdsqJgJ a.hY8lWHgA",
               (el) => el.href
             );
-            console.log(username, "在直播", href);
+            console.log(username, "在直播");
 
             const pathname = new URL(href).pathname;
             const live_id = pathname.replace("/", "");
@@ -176,26 +169,34 @@ async function handleToLiveRoom(
   { live_url, live_id, url, living, i, len }
 ) {
   await page.goto(live_url);
-  console.log("已进入直播间", live_id);
+
+  await page
+    .waitForSelector(".mLnbv9qu.pmBw8k1t  .ZblGNktR2", { timeout: 10000 })
+    .then((btn) => {
+      pclog.green("开启声音");
+      btn.click();
+    })
+    .catch((err) => pclog.red("err: ", err));
+
+  await delay(ms("1s"));
 
   await page.waitForSelector(".jpguc9PK a").catch(() => {
-    console.log(pc.red("等待.jpguc9PK a元素出现时发生错误:"));
+    pclog.red(pc.red("等待.jpguc9PK a元素出现时发生错误:"));
   });
 
   const username = await page
     .$eval(".jpguc9PK a", (el) => el.innerText)
     .catch((err) => {
-      console.log(".jpguc9PK a 获取href失败", err);
+      pclog.red(".jpguc9PK a 获取href失败", err);
     });
 
   console.log("username", username);
-
-  saveHadView({ live_id, username, home_url: url });
 
   const waitTime = randomNum(8, 12) + "s";
 
   logStr({ username, living, i, len, waitTime, live_id });
   await delay(ms(waitTime));
+  saveHadView({ live_id, username, home_url: url });
 }
 
 function randomNum(min, max) {
@@ -218,8 +219,4 @@ function getTodayDateString() {
 function getCurrentTime() {
   const now = new Date();
   return now.toLocaleTimeString();
-}
-
-function waitForSelector(page, className) {
-  return;
 }

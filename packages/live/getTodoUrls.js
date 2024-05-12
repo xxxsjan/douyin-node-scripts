@@ -1,7 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-
-const { shuffleArray } = require("../utils");
+const shuffle = require("lodash/shuffle");
 
 const getTodoUrls = () => {
   const httpLogFile = path.resolve(__dirname, "assets/2_Headers.txt");
@@ -26,12 +25,12 @@ const getTodoUrls = () => {
     const isLiveURL = /live\.douyin\.com/.test(url);
     return {
       url,
-      type: isLiveURL ? "live_room" : "home_page",
+      type: isLiveURL ? "live_url" : "home_page",
       live_id: isLiveURL ? new URL(url).pathname.replace("/", "") : "",
     };
   });
 
-  return shuffleArray(todoList);
+  return shuffle(todoList);
 };
 
 module.exports = {
