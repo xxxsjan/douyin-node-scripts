@@ -10,7 +10,10 @@
   "author": "",
   "license": "ISC",
   "exports": {
-    ".": "./index.js",
+    ".": {
+      "import": "./index.js",
+      "require": "./index.js"
+    },
     "./createPuppeteer": "./createPuppeteer.js"
   }
 }

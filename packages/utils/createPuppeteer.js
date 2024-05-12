@@ -5,6 +5,7 @@ const prompts = require("prompts");
 const pc = require("picocolors");
 
 async function getWsUrl() {
+  console.log("http://127.0.0.1:9222/json/version");
   let cacheData, defaultWs;
 
   const cachePath = path.resolve(process.cwd(), "config.json");
@@ -65,7 +66,7 @@ async function createPuppeteer() {
     const page = await browser.newPage();
 
     await page.setViewport({ width: 1200, height: 600, deviceScaleFactor: 1 });
-  
+
     return {
       browser,
       page,
