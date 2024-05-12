@@ -5,37 +5,47 @@ const fs = require("fs");
 const path = require("path");
 
 const { createPuppeteer } = require("utils/createPuppeteer");
+const { log } = require("utils");
 
 const { getTodoUrls } = require("./getTodoUrls");
 
 const roomIdData = getTodoUrls();
-
 if (!fs.existsSync(path.resolve(process.cwd(), "./cache"))) {
   fs.mkdirSync(path.resolve(process.cwd(), "./cache"));
 }
 const low = require("lowdb");
-
 const FileSync = require("lowdb/adapters/FileSync");
-const dbPath = path.resolve(
-  process.cwd(),
-  `./cache/db-${getTodayDateString()}.json`
-);
 
-const adapter = new FileSync(dbPath);
-const db = low(adapter);
+const db = initDb();
 
-db.defaults({ hadView: [], notLive: [] }).write();
+function initDb() {
+  const dbPath = path.resolve(
+    process.cwd(),
+    `./cache/db-${getTodayDateString()}.json`
+  );
 
-const dataTime = db.get("date").value() || 0;
+  const adapter = new FileSync(dbPath);
+  const db = low(adapter);
 
-if (!isSameDay(new Date(), new Date(dataTime))) {
-  db.set("date", new Date().getTime()).write();
-  db.set("hadView", []).write();
-  db.set("notLive", []).write();
+  db.defaults({ hadView: [], notLive: [] }).write();
+
+  const dataTime = db.get("date").value() || 0;
+
+  if (!isSameDay(new Date(), new Date(dataTime))) {
+    db.set("date", new Date().getTime()).write();
+    db.set("hadView", []).write();
+    db.set("notLive", []).write();
+  }
+  log.green('db 初始化完成')
+  return db;
 }
 
 function saveNotLive(data) {
-  db.get("notLive").push(data).write();
+  const notLive = db.get("notLive").value();
+
+  if (!notLive.find((f) => f.username == data.name)) {
+    db.get("notLive").push(data).write();
+  }
 }
 
 function saveHadView(data) {
@@ -45,8 +55,9 @@ function saveHadView(data) {
 }
 
 (async function () {
-  await run();
+  // await run();
 })();
+
 async function run() {
   try {
     const { page } = await createPuppeteer();
@@ -60,7 +71,7 @@ async function run() {
       const hadView = db.get("hadView").value();
       if (type === "live_room") {
         if (hadView.find((f) => f.live_id === live_id)) {
-          console.log(live_id, "已观看");
+          console.log(live_id, "已观看", i, len);
           i++;
           continue;
         } else {
@@ -84,26 +95,31 @@ async function run() {
         } else {
           // 主页
           await page.goto(url);
-          await page.waitForSelector(".BhdsqJgJ");
+          await page.waitForSelector(".BhdsqJgJ").catch(() => {
+            console.log("BhdsqJgJ 获取失败");
+          });
 
           const usernameSelector = ".j5WZzJdp span span span span";
           const username = await page.$eval(
             usernameSelector,
             (el) => el.innerText
           );
-          console.log(username);
+
           // .BhdsqJgJ .ZgMmtbts 未直播
           // .BhdsqJgJ .KZ_xK377 在直播
 
           const living = await page.$(".BhdsqJgJ .KZ_xK377");
 
           if (living) {
-            page.waitForSelector(".BhdsqJgJ a.hY8lWHgA");
+            page.waitForSelector(".BhdsqJgJ a.hY8lWHgA").catch(() => {
+              console.log(".BhdsqJgJ a.hY8lWHgA 获取失败");
+            });
             const href = await page.$eval(
               ".BhdsqJgJ a.hY8lWHgA",
               (el) => el.href
             );
-            // console.log(href);
+            console.log(username, "在直播", href);
+
             const pathname = new URL(href).pathname;
             const live_id = pathname.replace("/", "");
             if (hadView.find((f) => f.live_id === live_id)) {
@@ -111,6 +127,7 @@ async function run() {
               i++;
               continue;
             }
+            console.log("即将进入进入直播间");
             await handleToLiveRoom(page, {
               live_url: href,
               live_id,
@@ -159,13 +176,23 @@ async function handleToLiveRoom(
   { live_url, live_id, url, living, i, len }
 ) {
   await page.goto(live_url);
-  await page.waitForSelector(".jpguc9PK a");
-  const username = await page.$eval(".jpguc9PK a", (el) => el.innerText);
+  console.log("已进入直播间", live_id);
+
+  await page.waitForSelector(".jpguc9PK a").catch(() => {
+    console.log(pc.red("等待.jpguc9PK a元素出现时发生错误:"));
+  });
+
+  const username = await page
+    .$eval(".jpguc9PK a", (el) => el.innerText)
+    .catch((err) => {
+      console.log(".jpguc9PK a 获取href失败", err);
+    });
+
+  console.log("username", username);
+
   saveHadView({ live_id, username, home_url: url });
 
-  console.log("live_id: ", live_id);
-
-  const waitTime = randomNum(8, 15) + "s";
+  const waitTime = randomNum(8, 12) + "s";
 
   logStr({ username, living, i, len, waitTime, live_id });
   await delay(ms(waitTime));
@@ -184,10 +211,15 @@ function isSameDay(date1, date2) {
 // 获取今天年月日字符串
 function getTodayDateString() {
   const today = new Date();
-  return today.toISOString().split("T")[0];
+  return today.toLocaleString().split(" ")[0].replaceAll("/", "-"); // 2024/5/12 00:55:34
 }
+
 // 获取当前时分秒
 function getCurrentTime() {
   const now = new Date();
   return now.toLocaleTimeString();
+}
+
+function waitForSelector(page, className) {
+  return;
 }
