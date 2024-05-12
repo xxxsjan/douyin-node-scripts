@@ -27,8 +27,11 @@ C:\Program Files\Google\Chrome\Application\chrome.exe --remote-debugging-port=92
 
 ## puppeteer 方法
 
-page.waitForSelector('selector') 等待对应的 dom 渲染完
-
+```js
+// 等待对应的 dom 渲染完
+page.waitForSelector('selector')
+// 获取 dom 信息
 page.evaluate(()=>{window 环境代码},params1:any)
 
 page.$eval('selector', (el) => {})
+```
