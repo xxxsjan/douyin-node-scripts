@@ -139,7 +139,7 @@ async function run() {
       }
     }
   } catch (error) {
-    console.log("live error", pc.bgRed(error));
+    pclog.red("run error", error);
   }
 }
 
@@ -176,12 +176,12 @@ async function handleToLiveRoom(
       pclog.green("开启声音");
       btn.click();
     })
-    .catch((err) => pclog.red("err: ", err));
+    .catch((err) => pclog.red("无弹出声音开启dom"));
 
   await delay(ms("1s"));
 
   await page.waitForSelector(".jpguc9PK a").catch(() => {
-    pclog.red(pc.red("等待.jpguc9PK a元素出现时发生错误:"));
+    pclog.red("等待.jpguc9PK a元素出现时发生错误:");
   });
 
   const username = await page
