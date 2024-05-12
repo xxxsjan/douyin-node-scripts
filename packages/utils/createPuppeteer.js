@@ -5,11 +5,10 @@ const prompts = require("prompts");
 const pc = require("picocolors");
 
 async function getWsUrl() {
-  console.log("http://127.0.0.1:9222/json/version");
+  console.log(pc.green("ws地址获取： http://127.0.0.1:9222/json/version"));
   let cacheData, defaultWs;
 
   const cachePath = path.resolve(process.cwd(), "config.json");
-  console.log("cachePath: ", cachePath);
 
   if (fs.existsSync(cachePath)) {
     cacheData = fs.readFileSync(cachePath, { encoding: "utf-8" });

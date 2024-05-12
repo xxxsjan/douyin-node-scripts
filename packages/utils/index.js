@@ -1,16 +1,19 @@
+const path = require("path");
+const fs = require("fs");
 const pc = require("picocolors");
+const { createPuppeteer } = require("./createPuppeteer");
 
-function shuffleArray(array) {
-  const newArray = array.slice(); // 创建原数组的副本
-
-  for (let i = newArray.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+function createCwdCacheFile(filename) {
+  const dirPath = path.resolve(process.cwd(), "./cache");
+  if (!fs.existsSync(dirPath)) {
+    fs.mkdirSync(dirPath, { recursive: true });
   }
 
-  return newArray;
+  const filePath = path.resolve(dirPath, filename);
+
+  return filePath;
 }
-const log = new Proxy(pc, {
+const pclog = new Proxy(pc, {
   get(target, property, receiver) {
     if (typeof target[property] === "function") {
       return function (...args) {
@@ -21,6 +24,7 @@ const log = new Proxy(pc, {
   },
 });
 module.exports = {
-  shuffleArray,
-  log,
+  pclog,
+  createPuppeteer,
+  createCwdCacheFile,
 };
