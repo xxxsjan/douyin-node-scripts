@@ -29,13 +29,13 @@ async function run() {
 
       const pattern = /^https:\/\/www\.douyin\.com\/user\/.+$/;
 
-      if (!pattern.test(cur.link)) {
+      if (!pattern.test(cur.homeUrl)) {
         console.log("链接不符合格式❌", cur);
         await walk(curIdx + 1, max);
         return;
       }
 
-      await page.goto(cur.link);
+      await page.goto(cur.homeUrl);
       await page.waitForSelector(".ty_H89Vr");
 
       const msg = await page.evaluate(({}) => {

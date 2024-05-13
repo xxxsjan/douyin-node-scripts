@@ -20,6 +20,9 @@ importers:
       dayjs:
         specifier: ^1.11.7
         version: 1.11.7
+      lowdb:
+        specifier: 1.0.0
+        version: 1.0.0
       ms:
         specifier: ^2.1.3
         version: 2.1.3
