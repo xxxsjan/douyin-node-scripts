@@ -1,4 +1,4 @@
-const { createPuppeteer } = require("../packages/utils");
+const { createPuppeteer } = require("utils");
 const { delay } = require("bluebird");
 const ms = require("ms");
 
