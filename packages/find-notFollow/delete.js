@@ -5,27 +5,27 @@ const path = require("path");
 var log = require("single-line-log").stdout;
 const { createPuppeteer } = require("../../utils/createPuppeteer");
 const folderPath = path.resolve(__dirname, "cache");
-const lacalPath = path.join(folderPath, "unfollow-result.json");
+const lacalPath = path.join(folderPath, "notFollow-result.json");
 
-const unfollowData = require(lacalPath) || [];
+const notFollowData = require(lacalPath) || [];
 
 run();
 
 async function run() {
   try {
-    if (unfollowData.length === 0) {
+    if (notFollowData.length === 0) {
       return;
     }
     const { browser, page } = await createPuppeteer();
 
-    await walk(0, unfollowData.length - 1);
+    await walk(0, notFollowData.length - 1);
 
     async function walk(curIdx, max) {
       if (curIdx > max) {
         return;
       }
 
-      const cur = unfollowData[curIdx];
+      const cur = notFollowData[curIdx];
 
       const pattern = /^https:\/\/www\.douyin\.com\/user\/.+$/;
 

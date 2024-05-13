@@ -4,9 +4,9 @@
   "description": "puppeteer获取抖音粉丝关注，分析互关",
   "main": "analysis-follow.js",
   "scripts": {
-    "start": "node ./src/find-unfollow/index.js",
-    "analysis": "node ./src/find-unfollow/analysis.js",
-    "delete": "node ./src/find-unfollow/delete.js"
+    "start": "node ./packages/find-notFollow/index.js",
+    "analysis": "node ./packages/find-notFollow/analysis.js",
+    "delete": "node ./packages/find-notFollow/delete.js"
   },
   "keywords": [],
   "author": "",
