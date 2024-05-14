@@ -5,5 +5,7 @@ const ms = require("ms");
 (async function () {
   const { page } = await createPuppeteer();
 
-  await page.goto("https://live.douyin.com/243107977808");
+  await page.goto(
+    "https://www.douyin.com/user/MS4wLjABAAAA4dV1PzWuQ45gHOU_F1LtcLbYh57C-mISdsP0BVyT0Ag"
+  );
 })();
