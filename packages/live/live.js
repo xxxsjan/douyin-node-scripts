@@ -7,6 +7,7 @@ const path = require("path");
 const { createPuppeteer, pclog, createCwdCacheFile } = require("utils");
 
 const { getTodoUrls } = require("./getTodoUrls");
+console.log('getTodoUrls: ', getTodoUrls);
 
 const low = require("lowdb");
 const FileSync = require("lowdb/adapters/FileSync");
@@ -83,11 +84,10 @@ async function run() {
 
       if (_f) {
         console.log(_f.username || _f.live_id || _f.home_url, "已观看", i, len);
-        console.log(11, i, len);
+
         i++;
         continue;
       } else {
-        console.log(22, i, len);
         // 主页
         await page.goto(url);
 
@@ -109,12 +109,13 @@ async function run() {
 
         const livingHref = await page
           .$eval(
-            ".o1w0tvbC.F3jJ1P9_.InbPGkRv>.BhdsqJgJ>frvzAIi8>a",
+            ".o1w0tvbC.F3jJ1P9_.InbPGkRv>.BhdsqJgJ>.frvzAIi8>a",
             (el) => el.href
           )
           .catch(() => {
             pclog.red("主页无live a标签");
           });
+
         const living = !!livingHref;
         console.log("living: ", living);
 
@@ -130,9 +131,9 @@ async function run() {
             i++;
             continue;
           }
-          console.log("即将进入进入直播间");
+          console.log(`即将进入${username}直播间`);
           await handleToLiveRoom(page, {
-            live_url: href,
+            live_url: livingHref,
             live_id,
             url,
             living,
@@ -178,7 +179,7 @@ async function handleToLiveRoom(
   await page.goto(live_url);
 
   await page
-    .waitForSelector(".xQl4U2BP.pmBw8k1t  .QxLRuOOq", { timeout: 10000 })
+    .waitForSelector(".xQl4U2BP.pmBw8k1t .ZblGNktR", { timeout: 10000 })
     .then((btn) => {
       pclog.green("开启声音");
       btn.click();
@@ -199,7 +200,7 @@ async function handleToLiveRoom(
 
   console.log("live 获取了username", username);
 
-  const waitTime = randomNum(8, 12) + "s";
+  const waitTime = randomNum(6, 10) + "s";
 
   logStr({ username, living, i, len, waitTime, live_id });
   await delay(ms(waitTime));
