@@ -40,26 +40,39 @@ function initDb() {
 function saveNotLive(data) {
   const notLive = db.get("notLive").value();
 
-  if (!notLive.find((f) => f.username == data.name)) {
+  if (!notLive.find((f) => f.username == data.username)) {
     db.get("notLive").push(data).write();
+    db.set("notLiveCount", notLive.length + 1).write();
   }
 }
 
 function saveHadView(data) {
   db.get("hadView").push(data).write();
+
   const _data = db.get("hadView").value();
+
+  const hadViewCount = db.set("hadViewCount", _data.length).write();
 
   console.log(
     pc.white(`[${getCurrentTime()}]`),
-    pc.green(` ${data.username} 已观看:${_data.length}`)
+    pc.green(` ${data.username} 已观看:${hadViewCount}`)
   );
 }
 
 async function run() {
+  const isFinish = db.get("finish").value();
+  if (isFinish) {
+    const _hadViewCount = db.get("hadViewCount").value();
+    const _notLiveCount = db.get("notLiveCount").value();
+    pclog.green(`✔已全部完成 / 已观看：${_hadViewCount}，未开播：${_notLiveCount}`);
+    return;
+  }
   const { page } = await createPuppeteer();
   const len = roomIdData.length;
   let i = 0;
   const hadView = db.get("hadView").value();
+
+  const targetData = [];
 
   while (i < len) {
     const itemData = roomIdData[i];
@@ -150,6 +163,7 @@ async function run() {
     }
   }
   console.log("done");
+  db.set("finish", true).write();
 }
 
 function logStr({ username = "", living, i, len, waitTime = "" }) {

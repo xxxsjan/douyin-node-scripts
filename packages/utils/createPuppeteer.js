@@ -8,7 +8,7 @@ async function getWsUrl() {
   console.log(pc.green("ws地址获取： http://127.0.0.1:9222/json/version"));
   let cacheData, defaultWs;
 
-  const cachePath = path.resolve(process.cwd(), "config.json");
+  const cachePath = path.resolve(process.cwd(), "cache/config.json");
 
   if (fs.existsSync(cachePath)) {
     cacheData = fs.readFileSync(cachePath, { encoding: "utf-8" });
