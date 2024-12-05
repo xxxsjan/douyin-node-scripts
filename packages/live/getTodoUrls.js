@@ -26,7 +26,7 @@ const getTodoUrls = () => {
 
   const todoList = [...users, ...rooms].map((url) => {
     return {
-      url,
+      url: new URL(url).origin + new URL(url).pathname,
       type: reg.test(url) ? "live_url" : "home_page",
       live_id: reg.test(url) ? new URL(url).pathname.replace("/", "") : "",
     };

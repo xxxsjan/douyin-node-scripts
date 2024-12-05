@@ -13,7 +13,23 @@ const FileSync = require("lowdb/adapters/FileSync");
 const roomIdData = getTodoUrls();
 
 const db = initDb();
+console.log('__filename: ', __filename);
+console.log('__dirname: ', __dirname);
 
+fs.readdir(__dirname, (err, files) => {
+  if (err) {
+    console.error("读取文件夹失败:", err);
+    return;
+  }
+
+  // 过滤掉隐藏文件（以 . 开头的文件）
+  const visibleFiles = files.filter(file => !file.startsWith('.'));
+
+  console.log("当前文件夹下的所有文件：");
+  visibleFiles.forEach(file => {
+    console.log(file);
+  });
+});
 (async function () {
   await run();
 })();
@@ -51,11 +67,11 @@ function saveHadView(data) {
 
   const _data = db.get("hadView").value();
 
-  const hadViewCount = db.set("hadViewCount", _data.length).write();
+  db.set("hadViewCount", _data.length).write();
 
   console.log(
     pc.white(`[${getCurrentTime()}]`),
-    pc.green(` ${data.username} 已观看:${hadViewCount}`)
+    pc.green(` ${data.username} 已观看:${_data.length}`)
   );
 }
 
@@ -64,7 +80,9 @@ async function run() {
   if (isFinish) {
     const _hadViewCount = db.get("hadViewCount").value();
     const _notLiveCount = db.get("notLiveCount").value();
-    pclog.green(`✔已全部完成 / 已观看：${_hadViewCount}，未开播：${_notLiveCount}`);
+    pclog.green(
+      `✔已全部完成 / 已观看：${_hadViewCount}，未开播：${_notLiveCount}`
+    );
     return;
   }
   const { page } = await createPuppeteer();
@@ -77,6 +95,7 @@ async function run() {
   while (i < len) {
     const itemData = roomIdData[i];
     const { live_id, url, type } = itemData;
+    console.log('url: ', url);
 
     if (type === "live_url") {
       if (hadView.find((f) => f.live_id === live_id)) {
@@ -205,13 +224,13 @@ async function handleToLiveRoom(
   if (isStop) {
     return;
   }
-  await page
-    .waitForSelector(".xQl4U2BP.pmBw8k1t .ZblGNktR", { timeout: 3000 })
-    .then((btn) => {
-      // pclog.green("开启声音");
-      // btn.click();
-    })
-    .catch((err) => pclog.red("无弹出声音开启dom"));
+  // await page
+  //   .waitForSelector(".xQl4U2BP.pmBw8k1t .ZblGNktR", { timeout: 3000 })
+  //   .then((btn) => {
+  //     // pclog.green("开启声音");
+  //     // btn.click();
+  //   })
+  //   .catch((err) => pclog.red("无弹出声音开启dom"));
 
   await delay(ms("1s"));
 
