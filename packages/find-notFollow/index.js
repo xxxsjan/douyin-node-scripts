@@ -16,10 +16,11 @@ async function run() {
 
   await page.goto("https://www.douyin.com/user/self");
 
-  const fansDom = await page.waitForSelector(".WetwxGAE.GQQEtJnJ");
+  const fansDom = await page.waitForSelector(".Q1A_pjwq.ELUP9h2u"); // 粉丝
 
-  const followCountDom = ".sCnO6dhe";
+  const followCountDom = ".C1cxu0Vq"; // 粉丝数
   const followCount = await page.$eval(followCountDom, (el) => el.innerHTML);
+  console.log("followCount: ", followCount);
 
   const maxNum = Number(followCount);
 
