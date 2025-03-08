@@ -16,7 +16,7 @@ async function run() {
 
   await page.goto("https://www.douyin.com/user/self");
 
-  const fansDom = await page.waitForSelector(".Q1A_pjwq.ELUP9h2u"); // 粉丝
+  const fansDom = await page.waitForSelector(".Q1A_pjwq .C1cxu0Vq"); // 粉丝
 
   const followCountDom = ".C1cxu0Vq"; // 粉丝数
   const followCount = await page.$eval(followCountDom, (el) => el.innerHTML);
@@ -27,20 +27,32 @@ async function run() {
   fansDom.click();
 
   //  列表容器
-  await page.waitForSelector('.eq0kzn5a[data-e2e="user-fans-container');
+  const parentSelector = ".FjupSA6k[data-e2e='user-fans-container']";
+  const childSelector = ".i5U4dMnB";
+  const nicknameSelector = ".arnSiSbK > span";
+  const statusSelector = ".HrvFYsXO.zPZJ3j40";
+  const homeUrlSelector = ".i5U4dMnB > a.uz1VJwFY";
+  const liveUrlSelector = ".i5U4dMnB >.oCYLk3Bi > a.uz1VJwFY";
+  await page.waitForSelector(parentSelector);
 
   let data = {};
   let isFoot = false;
   while (!isFoot) {
     const _data = await page.evaluate(
-      ({ maxNum, selector }) => {
-        const w = document.querySelector(
-          '.eq0kzn5a[data-e2e="user-fans-container'
-        );
+      ({
+        maxNum,
+        parentSelector,
+        childSelector,
+        nicknameSelector,
+        statusSelector,
+        homeUrlSelector,
+        liveUrlSelector,
+      }) => {
+        const w = document.querySelector(parentSelector);
 
         const { scrollTop, scrollHeight, clientHeight } = w;
 
-        const elements = document.querySelectorAll(".QxZvDLx8");
+        const elements = document.querySelectorAll(childSelector);
 
         const renderNum = elements.length;
 
@@ -58,20 +70,14 @@ async function run() {
         if (renderNum >= maxNum) {
           const curData = [];
           elements.forEach((element) => {
-            // .QxZvDLx8 .iAqs9BfT .frvzAIi8 a.hY8lWHgA 直播中
-            // .QxZvDLx8 .iAqs9BfT a.hY8lWHgA
             const nickname =
-              element.querySelector(".j5WZzJdp > span").textContent;
+              element.querySelector(nicknameSelector).textContent;
 
-            const status = element.querySelector(
-              ".DrgO6Dle .mqZgWvzs"
-            ).textContent;
+            const status = element.querySelector(statusSelector).textContent;
 
-            const homeUrlEl = element.querySelector(".iAqs9BfT > a.hY8lWHgA");
+            const homeUrlEl = element.querySelector(homeUrlSelector);
 
-            const liveEl = element.querySelector(
-              ".iAqs9BfT > .frvzAIi8 > a.hY8lWHgA"
-            );
+            const liveEl = element.querySelector(liveUrlSelector);
 
             curData.push({
               nickname, // 昵称
@@ -88,6 +94,12 @@ async function run() {
       {
         // maxNum: 123,
         maxNum, // 最大显示个数，参考关注数
+        parentSelector,
+        childSelector,
+        nicknameSelector,
+        statusSelector,
+        homeUrlSelector,
+        liveUrlSelector,
       }
     );
 
