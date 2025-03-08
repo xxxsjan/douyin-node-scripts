@@ -27,13 +27,16 @@ async function run() {
   fansDom.click();
 
   //  列表容器
-  const parentSelector = ".FjupSA6k[data-e2e='user-fans-container']";
-  const childSelector = ".i5U4dMnB";
-  const nicknameSelector = ".arnSiSbK > span";
-  const statusSelector = ".HrvFYsXO.zPZJ3j40";
-  const homeUrlSelector = ".i5U4dMnB > a.uz1VJwFY";
-  const liveUrlSelector = ".i5U4dMnB >.oCYLk3Bi > a.uz1VJwFY";
-  await page.waitForSelector(parentSelector);
+  const selectors = {
+    parentSelector: ".FjupSA6k[data-e2e='user-fans-container']",
+    childSelector: ".i5U4dMnB",
+    nicknameSelector: ".i5U4dMnB .kUKK9Qal .arnSiSbK > span",
+    statusSelector: ".i5U4dMnB .HrvFYsXO.qiKy46zD  button> span> .zPZJ3j40",
+    homeUrlSelector: ".i5U4dMnB .umh5JQVJ > a.uz1VJwFY",
+    liveUrlSelector: ".i5U4dMnB .umh5JQVJ >.oCYLk3Bi > a.uz1VJwFY",
+  };
+
+  await page.waitForSelector(selectors.parentSelector);
 
   let data = {};
   let isFoot = false;
@@ -94,12 +97,7 @@ async function run() {
       {
         // maxNum: 123,
         maxNum, // 最大显示个数，参考关注数
-        parentSelector,
-        childSelector,
-        nicknameSelector,
-        statusSelector,
-        homeUrlSelector,
-        liveUrlSelector,
+        ...selectors,
       }
     );
 
@@ -108,7 +106,7 @@ async function run() {
       isFoot = true;
       data = _data;
     }
-    console.log("🚀  :", _data.renderNum, followCount, maxNum);
+    console.log("🚀:", `${_data.renderNum} / ${followCount}`, maxNum);
   }
 
   if (data.curData) {
