@@ -26,14 +26,3 @@
 如果没有就是浏览器没关闭，右下角看有没chrome图标，默认会保持后台运行，去掉勾选就可以了
 
 ![image-20240309135409987](/doc/image-20240309135409987.png)
-
-## puppeteer 方法
-
-```js
-// 等待对应的 dom 渲染完
-page.waitForSelector('selector')
-// 获取 dom 信息
-page.evaluate(()=>{window 环境代码},params1:any)
-
-page.$eval('selector', (el) => {})
-```
